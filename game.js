@@ -77,7 +77,7 @@ game.scenes.add("title", new Splat.Scene(canvas, function() {
 	scene.laser = new Splat.Entity(canvas.width/2, canvas.height/2, 0, 0);
 	scene.laser.draw = function(context){
 		drawCircle(context, "rgba(255,0,0,.4)", 100, "rgba(255,0,0,1)", 1, this.x, this.y);
-	}
+	};
 
 	scene.drawables = [
 	scene.leftPaw,
