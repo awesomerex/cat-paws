@@ -8,12 +8,15 @@
     "splatjs": "^2.3.0"
   },
   "devDependencies": {
+    "grunt": "^0.4.5",
     "browserify": "^4.1.8",
-    "jshint": "^2.5.1"
+    "jshint": "^2.5.1",
+    "watchify": "^1.0.2"
   },
   "scripts": {
     "lint-js": "bash -c \"jshint game.js\"",
     "build-js": "browserify game.js -o index.js",
+    "watch-js": "npm run lint-js && watchify game.js -o index.js -v",
     "build": "npm run lint-js && npm run build-js"
   },
   "author": "Rex Soriano <awesomerex@gmail.com> (http://awesomerex.com)",
