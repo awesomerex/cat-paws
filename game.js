@@ -28,6 +28,16 @@ var manifest = {
 
 var game = new Splat.Game(canvas, manifest);
 
+function drawCircle(context, color, radius, strokeColor, strokeSize, x, y) {
+	context.beginPath();
+	context.arc(x, y, radius, 0, 2 * Math.PI, false);
+	context.fillStyle = color;
+	context.fill();
+	context.lineWidth = strokeSize;
+	context.strokeStyle = strokeColor;
+	context.stroke();
+}
+
 function drawEntities(context, entities) {
 	entities.sort(function(a, b) {
 		return b.y - a.y;
@@ -52,32 +62,35 @@ game.scenes.add("title", new Splat.Scene(canvas, function() {
 	var scene = this;
 	var leftPaw = game.animations.get("left-paw");
 	var rightPaw = game.animations.get("right-paw");
-	scene.leftPawOffsetX = -182;
-	// var leftPawOffsetY = 258;
-	// var rightPawOffsetX = 201;
-	// var rightPawOffsetY = 301;
 
-	scene.leftPaw = new Splat.AnimatedEntity(-300,0,rightPaw.width, rightPaw.height, rightPaw,0,0);
-	scene.rightPaw = new Splat.AnimatedEntity(500,0,leftPaw.width, leftPaw.height, leftPaw,0,0);
+	scene.leftPaw = new Splat.AnimatedEntity(-300,0,rightPaw.width, rightPaw.height, rightPaw,-432,-104);
+	scene.leftPaw.draw = function(context){
+		Splat.AnimatedEntity.prototype.draw.call(this, context);
+		drawCircle(context, "rgba(0,0,255,.3)", 100, "rgba(0,0,255,1)", 1, this.x, this.y);
+	};
+	scene.rightPaw = new Splat.AnimatedEntity(500,0,leftPaw.width, leftPaw.height, leftPaw,-125,-121);
+	scene.rightPaw.draw = function(context){
+		Splat.AnimatedEntity.prototype.draw.call(this, context);
+		drawCircle(context, "rgba(0,0,255,.3)", 100, "rgba(0,0,255,1)", 1, this.x, this.y);
+	};
 
-	scene.leftHit = new Splat.Entity(scene.leftPaw.x, scene.leftPaw.y, 182, 258);
-	scene.rightHit = new Splat.Entity(scene.rightPaw.x, scene.rightPaw.y, 201, 301);
-
-
+	scene.laser = new Splat.Entity(canvas.width/2, canvas.height/2, 0, 0);
+	scene.laser.draw = function(context){
+		drawCircle(context, "rgba(255,0,0,.4)", 100, "rgba(255,0,0,1)", 1, this.x, this.y);
+	}
 
 	scene.drawables = [
 	scene.leftPaw,
-	scene.rightPaw
+	scene.rightPaw,
+	scene.laser
 	];
 }, function() {
 	// simulation
-	this.leftPaw.x = game.mouse.x - 650;
+	this.leftPaw.x = game.mouse.x - 200;
 	this.leftPaw.y = game.mouse.y;
-	this.rightPaw.x = game.mouse.x + 75;
+	this.rightPaw.x = game.mouse.x + 200;
 	this.rightPaw.y = game.mouse.y;
 
-	this.leftHit.x = this.leftPaw.x + this.leftPaw.width + this.leftPawOffsetX;
-	this.rightHit.x = this.rightPaw.x;
 }, function(context) {
 	// draw
 	context.fillStyle = "#FFFFFF";
@@ -85,10 +98,6 @@ game.scenes.add("title", new Splat.Scene(canvas, function() {
 
 	var drawables = this.drawables.slice(0);
 	drawEntities(context, drawables);
-
-	context.strokeRect(this.leftHit.x, this.leftHit.y, this.leftHit.width, this.leftHit.height);
-	context.strokeRect(this.rightHit.x, this.rightHit.y, this.rightHit.width, this.rightHit.height);
-	context.fillStyle = "#07B4F2F";
 
 
 }));
